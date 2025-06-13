@@ -6,14 +6,14 @@ from PIL import Image
 import io
 import re
 
-# FIX: Define caminho do executável do tesseract manualmente
+# Define caminho do tesseract no ambiente Docker
 pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
 st.set_page_config(page_title="GNRE → Excel", layout="wide")
-st.title("🧾 Extrator GNRE para Planilha Financeira")
+st.title("💾 Extrator GNRE para Planilha Financeira")
 st.markdown("Faça upload dos PDFs da GNRE e gere automaticamente a planilha no formato correto.")
 
-uploaded_files = st.file_uploader("📎 Envie um ou mais arquivos PDF:", type="pdf", accept_multiple_files=True)
+uploaded_files = st.file_uploader("📋 Envie um ou mais arquivos PDF:", type="pdf", accept_multiple_files=True)
 
 @st.cache_data
 def extract_data_from_pdf(file):
