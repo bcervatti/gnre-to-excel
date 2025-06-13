@@ -1,26 +1,22 @@
-FROM python:3.10
+FROM ubuntu:22.04
 
-# Instala tesseract e dependências
-RUN apt-get update && apt-get install -y \
-    tesseract-ocr \
-    libtesseract-dev \
-    libleptonica-dev \
-    poppler-utils \
-    libgl1-mesa-glx \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Instala Python + Tesseract + dependências
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip tesseract-ocr libgl1-mesa-glx poppler-utils && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Diretório de trabalho
+# Define diretório de trabalho
 WORKDIR /app
 
-# Copia e instala dependências
+# Copia requirements e instala
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Copia o restante do projeto
+# Copia código da aplicação
 COPY . .
 
-# Expõe a porta padrão
+# Expõe a porta do Streamlit
 EXPOSE 8501
 
-# Roda a aplicação
+# Comando de inicialização
 CMD ["streamlit", "run", "gnre_pdf_to_excel.py", "--server.port=8501", "--server.address=0.0.0.0"]
