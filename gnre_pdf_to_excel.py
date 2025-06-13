@@ -2,12 +2,21 @@ import streamlit as st
 import pandas as pd
 import fitz  # PyMuPDF
 import pytesseract
+import shutil
+
+# Detecta onde está o executável do tesseract no ambiente
+tesseract_path = shutil.which("tesseract")
+if tesseract_path:
+    pytesseract.pytesseract.tesseract_cmd = tesseract_path
+else:
+    raise RuntimeError("Tesseract não encontrado no PATH")
+
 from PIL import Image
 import io
 import re
 
 # Define caminho do tesseract no ambiente Docker
-pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
+#pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
 st.set_page_config(page_title="GNRE → Excel", layout="wide")
 st.title("💾 Extrator GNRE para Planilha Financeira")
