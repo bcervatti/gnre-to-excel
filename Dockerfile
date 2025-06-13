@@ -1,29 +1,23 @@
-FROM debian:bullseye-slim
+FROM python:3.10-slim
 
-# Atualiza pacotes e instala tesseract + libs essenciais
-RUN apt-get update && \
-    apt-get install -y \
+# Instala dependências do sistema e o Tesseract OCR
+RUN apt-get update && apt-get install -y \
     tesseract-ocr \
-    python3 \
-    python3-pip \
+    libtesseract-dev \
     libgl1-mesa-glx \
-    && apt-get clean
-
-# Define caminho do Tesseract como variável de ambiente
-ENV TESSERACT_CMD=/usr/bin/tesseract
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Define diretório de trabalho
 WORKDIR /app
 
-# Copia dependências
+# Copia os arquivos
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o app
 COPY . .
 
-# Porta Streamlit
+# Porta padrão do Streamlit
 EXPOSE 8501
 
-# Comando para iniciar o app
 CMD ["streamlit", "run", "gnre_pdf_to_excel.py", "--server.port=8501", "--server.address=0.0.0.0"]
