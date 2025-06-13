@@ -6,6 +6,9 @@ from PIL import Image
 import io
 import re
 
+# FIX: Define caminho do executável do tesseract manualmente
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
+
 st.set_page_config(page_title="GNRE → Excel", layout="wide")
 st.title("🧾 Extrator GNRE para Planilha Financeira")
 st.markdown("Faça upload dos PDFs da GNRE e gere automaticamente a planilha no formato correto.")
