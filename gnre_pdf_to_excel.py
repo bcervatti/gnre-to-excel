@@ -5,14 +5,9 @@ import pytesseract
 from PIL import Image
 import io
 import re
-import shutil
 
-# Detecta onde está o executável do tesseract
-tesseract_path = shutil.which("tesseract")
-if tesseract_path:
-    pytesseract.pytesseract.tesseract_cmd = tesseract_path
-else:
-    raise RuntimeError("Tesseract não encontrado no PATH")
+# pytesseract usará automaticamente o tesseract do sistema, se disponível
+pass
 
 st.set_page_config(page_title="GNRE → Excel", layout="wide")
 st.title("📄 Extrator GNRE para Planilha Financeira")
@@ -29,7 +24,8 @@ def extract_data_from_pdf(file):
     ocr_text = pytesseract.image_to_string(image)
 
     # Extrair CNPJ do contribuinte
-    cnpj_contrib_match = re.search(r"COMERCIO ARTIGOS MOMBEK LTDA\s+(\d{14})", ocr_text)
+    insc_est_match = re.search(r"CNPJ/CPF/Insc\\. Est\\.:\\s*([0-9\\.\\-/]+)", ocr_text)
+    cnpj_contrib = insc_est_match.group(1).replace(".", "").replace("-", "").replace("/", "") if insc_est_match else ""
     cnpj_contrib = cnpj_contrib_match.group(1) if cnpj_contrib_match else ""
 
     # UF Favorecida
@@ -47,7 +43,7 @@ def extract_data_from_pdf(file):
     saida_valor = saida_match.group(1) if saida_match else ""
 
     # NFe / RPS: buscar diretamente no OCR (mais preciso)
-    nfe_rps_match = re.search(r"No de Controle\s*(\d{10,20})", ocr_text)
+    nfe_rps_match = re.search(r"No de Controle\s*.*?(\d{16})", ocr_text)
     nfe_rps = nfe_rps_match.group(1) if nfe_rps_match else ""
 
     return {
